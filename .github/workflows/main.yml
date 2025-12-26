@@ -1,0 +1,23 @@
+name: Docker Nginx CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-nginx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Nginx container and check HTTP 200
+        run: |
+          docker run -d --name nginx-test -p 8080:80 nginx
+          sleep 5
+          curl -I http://localhost:8080 | grep "200 OK"
+          docker stop nginx-test
+          docker rm nginx-test
